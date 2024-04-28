@@ -21,7 +21,7 @@ sed -i 's/KERNEL_PATCHVER:=.*/KERNEL_PATCHVER:=6.6/g' ./target/linux/rockchip/Ma
 sed -i 's/KERNEL_PATCHVER:=.*/KERNEL_PATCHVER:=6.6/g' ./target/linux/x86/Makefile
 
 # 默认IP由1.1修改为0.1
-# sed -i 's/192.168.1.1/192.168.0.1/g' package/base-files/files/bin/config_generate
+# sed -i 's/192.168.1.1/192.168.10.5/g' package/base-files/files/bin/config_generate
 
 # 更改默认 Shell 为 zsh
 # sed -i 's/\/bin\/ash/\/usr\/bin\/zsh/g' package/base-files/files/etc/passwd
@@ -61,25 +61,25 @@ rm -rf feeds/packages/utils/ttyd
 merge_package master https://github.com/immortalwrt/packages feeds/packages/utils utils/ttyd
 
 # MSD组播转换luci
-git clone https://github.com/lwb1978/luci-app-msd_lite package/luci-app-msd_lite
+#git clone https://github.com/lwb1978/luci-app-msd_lite package/luci-app-msd_lite
 
 # 优化socat中英翻译
-sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh-cn/socat.po
+#sed -i 's/仅IPv6/仅 IPv6/g' package/feeds/luci/luci-app-socat/po/zh-cn/socat.po
 
 # SmartDNS
-rm -rf feeds/luci/applications/luci-app-smartdns
+#rm -rf feeds/luci/applications/luci-app-smartdns
 git clone -b lede --single-branch https://github.com/lwb1978/luci-app-smartdns package/luci-app-smartdns
 # 更新lean仓库的smartdns版本到最新
-rm -rf feeds/packages/net/smartdns
-cp -rf ${GITHUB_WORKSPACE}/patch/smartdns feeds/packages/net
+#rm -rf feeds/packages/net/smartdns
+#cp -rf ${GITHUB_WORKSPACE}/patch/smartdns feeds/packages/net
 # 更新lean的内置的smartdns版本
 # sed -i 's/1.2021.35/2022.03.02/g' feeds/packages/net/smartdns/Makefile
 # sed -i 's/f50e4dd0813da9300580f7188e44ed72a27ae79c/1fd18601e7d8ac88e8557682be7de3dc56e69105/g' feeds/packages/net/smartdns/Makefile
 # sed -i 's/^PKG_MIRROR_HASH/#&/' feeds/packages/net/smartdns/Makefile
 
 # 替换udpxy为修改版
-rm -rf feeds/packages/net/udpxy/Makefile
-cp -f ${GITHUB_WORKSPACE}/patch/udpxy/Makefile feeds/packages/net/udpxy/
+#rm -rf feeds/packages/net/udpxy/Makefile
+#cp -f ${GITHUB_WORKSPACE}/patch/udpxy/Makefile feeds/packages/net/udpxy/
 
 # 更新curl
 curl_ver=$(cat feeds/packages/net/curl/Makefile | grep -i "PKG_VERSION:=" | awk 'BEGIN{FS="="};{print $2}' | awk 'BEGIN{FS=".";OFS="."};{print $1,$2}')
@@ -89,14 +89,7 @@ if [ $curl_ver \< 8.7 ]; then
 	cp -rf ${GITHUB_WORKSPACE}/patch/curl-lede feeds/packages/net/curl
 fi
 
-# samba4
-rm -rf feeds/packages/net/samba4
-git clone https://github.com/sbwml/feeds_packages_net_samba4 feeds/packages/net/samba4
-# enable multi-channel
-sed -i '/workgroup/a \\n\t## enable multi-channel' feeds/packages/net/samba4/files/smb.conf.template
-sed -i '/enable multi-channel/a \\tserver multi channel support = yes' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/#aio read size = 0/aio read size = 1/g' feeds/packages/net/samba4/files/smb.conf.template
-sed -i 's/#aio write size = 0/aio write size = 1/g' feeds/packages/net/samba4/files/smb.conf.template
+
 
 # 实时监控
 # rm -rf feeds/luci/applications/luci-app-netdata
